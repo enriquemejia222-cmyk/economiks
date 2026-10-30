@@ -1,0 +1,59 @@
+name: Actualizar datos y publicar
+
+on:
+  schedule:
+    - cron: "17 17 * * 1-5"   # lunes a viernes, 1:17 p. m. en Santo Domingo
+  workflow_dispatch:           # botón "Run workflow" para correrlo a mano
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependencias
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+          pip install pymupdf openpyxl numpy
+      - name: Bajar las fuentes y generar data.json
+        run: python3 -I update.py --out . --hist historial_riesgo.json
+      - name: Revisar los datos
+        run: python3 check.py
+      - name: Guardar los datos nuevos
+        run: |
+          git config user.name "economiks-bot"
+          git config user.email "economiks-bot@users.noreply.github.com"
+          git add data.json historial_riesgo.json
+          git diff --cached --quiet || git commit -m "Datos al $(date -u +%F)"
+          git push
+
+  publicar:
+    needs: [actualizar]
+    if: always() && (needs.actualizar.result == 'success' || needs.actualizar.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deploy
+        uses: actions/deploy-pages@v4
