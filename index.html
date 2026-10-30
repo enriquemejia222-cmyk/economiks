@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Economiks</title>
+<meta name="description" content="Riesgo país, crecimiento, inflación y deuda de Latinoamérica y Estados Unidos, con datos oficiales y su historia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a newspaper data desk. Hairline rules instead of boxes, serif headlines and prose, sans for numbers and charts. */
+:root{
+  color-scheme:light;
+  --ink:#111418;
+  --paper:#ffffff;
+  --rule:#d9dcdf;
+  --accent:#1f5fae;
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --bg:var(--paper); --surface:var(--paper); --surface-2:#f2f3f5; --line:var(--rule); --grid:#eceef0;
+  --text:var(--ink); --text-2:#4b525b; --text-3:#7d848c;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#6250d6;
+  --s1-wash:rgba(42,120,214,.09); --proj:rgba(17,20,24,.035);
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --bad:#d03b3b;
+  --good-ink:#0a6b0a; --bad-ink:#b02a2a; --warn-ink:#8a5a00;
+  --bar-muted:#d3d8de; --link:#1f5fae;
+  --band:#111418; --band-text:#eceff2; --band-2:#9aa3ad; --up:#ff8f7a; --down:#7fe08f;
+  --r1:#cde2fb; --r2:#86b6ef; --r3:#2a78d6; --r4:#184f95; --rnone:#e9ebee;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ink:#eceff2; --paper:#121417; --rule:#2c3036;
+    --surface-2:#1b1e22; --grid:#23272c; --text-2:#b8bec6; --text-3:#8b929b;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    --s1-wash:rgba(57,135,229,.14); --proj:rgba(255,255,255,.045);
+    --good-ink:#62d362; --bad-ink:#f28b8b; --warn-ink:#f5c04a; --bar-muted:#383e46; --link:#86b6ef; --accent:#86b6ef;
+    --band:#08090b;
+    --r1:#1c3350; --r2:#256abf; --r3:#5598e7; --r4:#b7d3f6; --rnone:#22262b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ink:#eceff2; --paper:#121417; --rule:#2c3036;
+  --surface-2:#1b1e22; --grid:#23272c; --text-2:#b8bec6; --text-3:#8b929b;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  --s1-wash:rgba(57,135,229,.14); --proj:rgba(255,255,255,.045);
+  --good-ink:#62d362; --bad-ink:#f28b8b; --warn-ink:#f5c04a; --bar-muted:#383e46; --link:#86b6ef; --accent:#86b6ef;
+  --band:#08090b;
+  --r1:#1c3350; --r2:#256abf; --r3:#5598e7; --r4:#b7d3f6; --rnone:#22262b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-underline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.serif{font-family:var(--f-display)}
+
+/* masthead */
+.mast .row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding-top:18px;padding-bottom:10px;border-bottom:3px double var(--ink)}
+.logo{font-family:var(--f-display);font-weight:600;font-size:34px;line-height:1;letter-spacing:-.01em;color:var(--text);text-decoration:none}
+.mast .date{font-size:12.5px;color:var(--text-2);text-align:right}
+nav.sec .row{display:flex;gap:22px;font-size:13.5px;font-weight:600;overflow-x:auto;scrollbar-width:none;padding-top:8px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+nav.sec a{color:var(--text-2);text-decoration:none;white-space:nowrap}
+nav.sec a:hover{color:var(--text);text-decoration:underline}
+
+/* ticker */
+.ticker{background:var(--band);color:var(--band-text);margin-top:0}
+.ticker .wrap{display:flex;align-items:center;gap:14px;height:40px}
+.ticker .lbl{font-size:12px;font-weight:600;color:var(--band-2);white-space:nowrap}
+.tk{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin;flex:1}
+.tk button{font:inherit;background:transparent;border:0;color:inherit;display:flex;align-items:baseline;gap:6px;padding:4px 9px;border-radius:4px;cursor:pointer;white-space:nowrap;font-size:13px}
+.tk button:hover,.tk button[aria-pressed="true"]{background:rgba(255,255,255,.1)}
+.tk button[disabled]{cursor:default}
+.tk .c{font-weight:600}
+.tk .v,.tk .d{font-variant-numeric:tabular-nums}
+.tk .d{font-size:12px}
+.tk .d.up{color:var(--up)} .tk .d.dn{color:var(--down)} .tk .d.eq{color:var(--band-2)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;padding:30px 0 26px;border-bottom:1px solid var(--line);align-items:start}
+h1{font-family:var(--f-display);font-weight:500;font-size:clamp(32px,4.6vw,54px);line-height:1.04;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance}
+.picker{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;margin:0 0 18px}
+select{font:inherit;font-weight:600;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 30px 7px 10px;appearance:none;-webkit-appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%237d848c' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+select.big{font-size:16px;padding:9px 34px 9px 12px;border-color:var(--ink)}
+.btn{font:inherit;font-size:13px;font-weight:600;color:var(--text-2);background:transparent;border:1px solid var(--line);border-radius:6px;padding:8px 12px;cursor:pointer}
+.btn:hover{color:var(--text);border-color:var(--text-2)}
+.brief{font-family:var(--f-display);font-size:19px;line-height:1.55;max-width:60ch;margin:0}
+.brief p{margin:0 0 10px}
+.brief strong{font-family:var(--f-body);font-size:16.5px;font-weight:700}
+.stamp{font-size:12.5px;color:var(--text-3);margin-top:12px}
+
+/* tile map */
+.mapbox h3{font-size:13.5px;margin:0 0 2px;font-weight:700}
+.mapbox .what{font-size:12.5px;color:var(--text-2);margin:0 0 10px}
+.tmap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;max-width:300px}
+.tile-c{aspect-ratio:1/1;border:0;border-radius:3px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font:inherit;padding:2px}
+.tile-c .a{font-size:10.5px;font-weight:700}
+.tile-c .n{font-size:11px;font-variant-numeric:tabular-nums}
+.tile-c.l1,.tile-c.l2{color:#0b1320} .tile-c.l3,.tile-c.l4{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tile-c.l1,:root:not([data-theme="light"]) .tile-c.l2{color:#fff}:root:not([data-theme="light"]) .tile-c.l3,:root:not([data-theme="light"]) .tile-c.l4{color:#0b1320}}
+:root[data-theme="dark"] .tile-c.l1,:root[data-theme="dark"] .tile-c.l2{color:#fff}
+:root[data-theme="dark"] .tile-c.l3,:root[data-theme="dark"] .tile-c.l4{color:#0b1320}
+.tile-c.l0{background:var(--rnone);color:var(--text-3)} .tile-c.l1{background:var(--r1)} .tile-c.l2{background:var(--r2)} .tile-c.l3{background:var(--r3)} .tile-c.l4{background:var(--r4)}
+.tile-c.sel{outline:2.5px solid var(--ink);outline-offset:1px}
+.mleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:var(--text-2);margin-top:10px;max-width:320px}
+.mleg span{display:inline-flex;align-items:center;gap:5px}
+.mleg i{width:11px;height:11px;border-radius:2px;display:inline-block}
+
+/* figures row */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--line)}
+.stat{padding:16px 18px 14px;border-left:1px solid var(--line);display:flex;flex-direction:column;gap:1px;min-width:0;text-decoration:none;color:inherit}
+.stat:first-child{border-left:0;padding-left:0}
+.stat:hover .lab{text-decoration:underline}
+.stat .lab{font-size:13px;color:var(--text-2);font-weight:600}
+.stat .val{font-size:34px;font-weight:600;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.stat .val small{font-size:14px;font-weight:500;color:var(--text-2);margin-left:3px}
+.stat .sub{font-size:12.5px;color:var(--text-2)}
+.stat .spark{height:34px;margin:6px 0 4px}
+.stat .spark svg{display:block;width:100%;height:100%;overflow:visible}
+.flag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-2);margin-top:2px}
+.flag .dot{width:8px;height:8px;border-radius:50%}
+.flag.good{color:var(--good-ink)} .flag.good .dot{background:var(--good)}
+.flag.warn{color:var(--warn-ink)} .flag.warn .dot{background:var(--warn)}
+.flag.serious{color:var(--bad-ink)} .flag.serious .dot{background:var(--serious)}
+.flag.bad{color:var(--bad-ink)} .flag.bad .dot{background:var(--bad)}
+.flag.neutral .dot{background:var(--text-3)}
+
+/* comparison bar */
+.cmpbar{position:relative;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:13.5px}
+@media (min-width:760px){.cmpbar{position:sticky;top:0}}
+.cmpbar .lead{color:var(--text-2);font-weight:600;margin-right:2px}
+.chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 10px;font-weight:600;background:var(--surface)}
+.chip b{width:12px;height:3px;border-radius:2px;display:inline-block}
+.chip.main{padding-right:10px}
+.chip button{border:0;background:transparent;color:var(--text-3);cursor:pointer;font:inherit;font-size:15px;line-height:1;padding:0 3px;border-radius:50%}
+.chip button:hover{color:var(--text);background:var(--surface-2)}
+.cmpbar select{font-size:13.5px}
+.cmpbar .hint{color:var(--text-3);font-size:12.5px}
+
+/* sections */
+section.block{padding-top:30px;scroll-margin-top:60px}
+.sechead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px;border-top:2px solid var(--ink);padding-top:10px;margin-bottom:18px}
+h2{font-family:var(--f-display);font-weight:500;font-size:30px;line-height:1.15;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.h2sub{font-family:var(--f-display);color:var(--text-2);margin:2px 0 0;font-size:17px;max-width:62ch}
+.opts{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;font-weight:600;border:0;background:transparent;color:var(--text-2);padding:5px 11px;cursor:pointer;border-left:1px solid var(--line)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.toggle{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--text-2);cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--ink);width:15px;height:15px}
+.key{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-2)}
+.key b{display:inline-block;width:14px;height:3px;border-radius:2px}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 40px}
+.card{min-width:0;position:relative}
+.card.wide{grid-column:1/-1}
+.card h3{font-size:16px;margin:0;font-weight:700}
+.card .bignum{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px;margin:2px 0 0}
+.card .bignum .n{font-size:28px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.card .bignum .n small{font-size:13.5px;color:var(--text-2);font-weight:500;margin-left:3px}
+.card .bignum .y{font-size:12.5px;color:var(--text-3)}
+.card .read{font-family:var(--f-display);font-size:16.5px;line-height:1.5;margin:6px 0 4px;max-width:68ch}
+.card .read em{font-style:normal;font-family:var(--f-body);font-size:14.5px;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0}
+.chart{position:relative;width:100%;height:230px;margin-top:4px}
+.card.wide .chart{height:320px}
+.chart svg{display:block;width:100%;height:100%;overflow:visible}
+.chart text{font-family:var(--f-body);font-size:11.5px;fill:var(--text-3);font-variant-numeric:tabular-nums}
+.chart .gl{stroke:var(--grid);stroke-width:1}
+.chart .zero{stroke:var(--text-2);stroke-width:1;opacity:.6}
+.chart .projbg{fill:var(--proj)}
+.chart .projlab{font-size:11px;fill:var(--text-3)}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 22px rgba(0,0,0,.12);border-radius:6px;padding:8px 10px;font-size:12.5px;min-width:160px;opacity:0;transition:opacity .08s;z-index:5;white-space:nowrap}
+.tip .t{font-weight:700;margin-bottom:3px}
+.tip .r{display:flex;align-items:center;gap:7px;color:var(--text-2)}
+.tip .r b{width:10px;height:3px;border-radius:2px;display:inline-block}
+.tip .r span:last-child{margin-left:auto;padding-left:12px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+.tip .note{color:var(--text-3);font-size:11.5px;margin-top:3px}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px;font-size:12px;color:var(--text-3);margin-top:6px;border-top:1px solid var(--grid);padding-top:6px}
+.foot .acts{display:inline-flex;gap:14px}.foot details{display:inline-block}
+details.how summary,details.data summary{cursor:pointer;list-style:none;font-weight:600;color:var(--text-2)}
+details.how summary::-webkit-details-marker,details.data summary::-webkit-details-marker{display:none}
+details.how[open] summary,details.data[open] summary{color:var(--text)}
+.howtxt{font-size:13px;color:var(--text-2);margin:6px 0 0;max-width:75ch}
+.tbl{max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:4px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 10px;text-align:right;border-bottom:1px solid var(--grid);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{position:sticky;top:0;background:var(--surface-2);color:var(--text-2);font-weight:600}
+.guide{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--text-2);margin:8px 0 0}
+.guide span{display:inline-flex;align-items:center;gap:6px}
+.guide i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.note2{font-size:12.5px;color:var(--text-3);margin:6px 0 0;max-width:80ch}
+
+/* ranking */
+.rank .row{display:grid;grid-template-columns:200px 1fr 80px;align-items:center;gap:10px;height:26px;cursor:pointer;padding:0 4px;border:0;background:transparent;width:100%;font:inherit;color:inherit;text-align:left;border-bottom:1px solid var(--grid)}
+.rank .row:hover{background:var(--surface-2)}
+.rank .row .nm{font-size:13.5px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank .row.sel .nm{color:var(--text);font-weight:700}
+.rank .row.cmp .nm{color:var(--text);font-weight:600}
+.rank .row.ref .nm{font-style:italic}
+.rank .track{position:relative;height:13px}
+.rank .bar{position:absolute;top:0;height:13px;border-radius:3px;background:var(--bar-muted)}
+.rank .bar.pos{border-top-left-radius:0;border-bottom-left-radius:0}
+.rank .bar.neg{border-top-right-radius:0;border-bottom-right-radius:0}
+.rank .row.ref .bar{background:transparent;border:1.5px dashed var(--text-3)}
+.rank .bar.cut::after{content:"";position:absolute;right:6px;top:-2px;bottom:-2px;width:4px;background:var(--bg);transform:skewX(-20deg)}
+.rank .axis0{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--text-3);opacity:.5}
+.rank .v{font-size:13px;font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.rankmed{font-size:12.5px;color:var(--text-3);margin-top:10px}
+
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 44px;font-size:14px;color:var(--text-2)}
+.about h4{font-family:var(--f-display);font-weight:600;font-size:19px;color:var(--text);margin:0 0 6px}
+.about p{margin:0 0 10px}
+.about ul{padding-left:18px;margin:0 0 12px}
+.about li{margin:4px 0}
+footer{margin:34px 0 0;padding:16px 0 44px;font-size:12.5px;color:var(--text-3);border-top:3px double var(--ink)}
+.err{padding:30px 0;font-size:16px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 14px;border-radius:6px;font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+
+@media (max-width:980px){.hero{grid-template-columns:1fr;gap:24px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:nth-child(3){border-left:0;padding-left:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:760px){.grid{grid-template-columns:1fr}.about{grid-template-columns:1fr}.mast .date{display:none}}
+@media (max-width:520px){
+  .wrap{padding:0 15px}
+  .logo{font-size:28px}
+  .stat{padding:12px 10px}
+  .stat .val{font-size:26px}
+  .rank .row{grid-template-columns:112px 1fr 64px;gap:6px}
+  .chart{height:210px}.card.wide .chart{height:250px}
+  h2{font-size:25px} .brief{font-size:17.5px}
+}
+</style>
+</head>
+<body>
+<header class="mast"><div class="wrap"><div class="row">
+  <a class="logo" href="#" id="top">Economiks</a>
+  <div class="date" id="mdate"></div>
+</div></div></header>
+<nav class="sec" aria-label="Secciones"><div class="wrap"><div class="row">
+  <a href="#riesgo">Riesgo país</a><a href="#actividad">Crecimiento y precios</a><a href="#finanzas">Deuda y dólares</a><a href="#ranking">Comparar todos</a><a href="#acerca">Fuentes y acerca de</a>
+</div></div></nav>
+<div class="ticker" aria-label="Riesgo país hoy"><div class="wrap">
+  <span class="lbl" id="tklbl">Riesgo país</span><div class="tk" id="tk"></div>
+</div></div>
+
+<main class="wrap" id="app"><div class="err">Cargando datos…</div></main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+let DATA, C, CODES, ALL, ALLC, LAST_REAL;
+const NF=(d)=>new Intl.NumberFormat("es-DO",{minimumFractionDigits:d,maximumFractionDigits:d});
+const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const MESL=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const MEDIAN="MED", MAXCMP=4;
+const SLOTS=["var(--s2)","var(--s3)","var(--s4)","var(--s5)"];
+const ABBR={ARG:"ARG",BOL:"BOL",BRA:"BRA",CHL:"CHL",COL:"COL",CRI:"CRI",DOM:"RD",ECU:"ECU",SLV:"SLV",GTM:"GTM",HND:"HND",HTI:"HTI",MEX:"MEX",NIC:"NIC",PAN:"PAN",PRY:"PRY",PER:"PER",URY:"URY",VEN:"VEN",USA:"EE.UU."};
+const TILE={MEX:[0,0],HTI:[4,0],DOM:[5,0],GTM:[1,1],HND:[2,1],SLV:[1,2],NIC:[2,2],CRI:[2,3],PAN:[3,3],COL:[3,4],VEN:[4,4],ECU:[2,5],PER:[3,5],BRA:[4,5],BOL:[3,6],PRY:[4,6],CHL:[3,7],ARG:[4,7],URY:[5,7]};
+
+const IND={
+  NGDP_RPCH:{t:"Crecimiento de la economía",short:"crecimiento",u:"%",d:1,better:"up",src:"FMI",
+    how:"Cuánto creció el PIB, todo lo que produce el país, descontando la inflación. Más alto es mejor; un número negativo es recesión."},
+  PCPIPCH:{t:"Inflación",short:"inflación",u:"%",d:1,better:"band",src:"FMI",
+    how:"Cuánto subieron los precios en promedio durante el año. Lo sano está entre 2% y 4%: más alta se come el salario, y negativa (deflación) también es mala señal."},
+  LUR:{t:"Desempleo",short:"desempleo",u:"%",d:1,better:"down",src:"FMI",
+    how:"Porcentaje de las personas que buscan trabajo y no lo encuentran. No mide el empleo informal, que en la región es muy alto."},
+  NGDPDPC:{t:"PIB por persona",short:"PIB por persona",u:"US$",d:0,better:"up",src:"FMI",
+    how:"El tamaño de la economía dividido entre la población, en dólares de cada año. Sirve como idea aproximada del nivel de vida; no dice cómo se reparte el ingreso."},
+  GGXWDG_NGDP:{t:"Deuda del gobierno",short:"deuda",u:"% del PIB",d:1,better:"down",src:"FMI",
+    how:"Todo lo que debe el gobierno, comparado con el tamaño de la economía. En países emergentes, pasar de 60% del PIB suele poner nerviosos a los mercados. Estados Unidos puede deber mucho más porque se endeuda en su propia moneda."},
+  GGXCNL_NGDP:{t:"Déficit o superávit del gobierno",short:"balance fiscal",u:"% del PIB",d:1,better:"up",src:"FMI",
+    how:"Lo que el gobierno ingresa menos lo que gasta en el año. Negativo es déficit: gastó más de lo que recibió y tuvo que pedir prestado."},
+  BCA_NGDPD:{t:"Cuenta corriente",short:"cuenta corriente",u:"% del PIB",d:1,better:"up",src:"FMI",
+    how:"Los dólares que entran menos los que salen por comercio, turismo, remesas e intereses. Un déficit pequeño es normal en un país que invierte; uno grande y largo lo hace depender de financiamiento de fuera."},
+  REM:{t:"Remesas",short:"remesas",u:"% del PIB",d:1,better:null,src:"Banco Mundial",
+    how:"Lo que envían a sus familias quienes viven en el exterior, comparado con el tamaño de la economía. No es bueno ni malo: muestra cuánto pesa la diáspora."}
+};
+const ACT=["NGDP_RPCH","PCPIPCH","LUR","NGDPDPC"], FIN=["GGXWDG_NGDP","GGXCNL_NGDP","BCA_NGDPD","REM"];
+const st={c:"DOM",ks:[MEDIAN,"USA"],slot:{},range:"20",proj:true,ri:"RISK",ry:null,rr:"all"};
+
+function el(tag,attrs,html){const e=document.createElement(tag);if(attrs)for(const k in attrs)e.setAttribute(k,attrs[k]);if(html!=null)e.innerHTML=html;return e;}
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));}
+function fmtDate(s){const d=new Date(s+"T12:00:00");return d.getDate()+" de "+MESL[d.getMonth()]+" de "+d.getFullYear();}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,2200);}
+
+/* ---------- data ---------- */
+function annual(ind,code){ if(code===MEDIAN) return medianSeries(ind); return DATA.annual[ind][code]||{}; }
+const _med={};
+function medianSeries(ind){
+  if(_med[ind]) return _med[ind];
+  const out={},years=new Set();
+  CODES.forEach(c=>Object.keys(DATA.annual[ind][c]||{}).forEach(y=>years.add(+y)));
+  years.forEach(y=>{const v=CODES.map(c=>(DATA.annual[ind][c]||{})[y]).filter(x=>x!=null).sort((a,b)=>a-b);
+    if(v.length>=10){const m=v.length>>1;out[y]=v.length%2?v[m]:(v[m-1]+v[m])/2;}});
+  return (_med[ind]=out);
+}
+function lastReal(ind,code){const s=annual(ind,code);let b=null;Object.keys(s).forEach(y=>{y=+y;if(y<=LAST_REAL&&(b===null||y>b))b=y;});return b===null?null:{y:b,v:s[b]};}
+function avg(s,y0,y1){const v=[];for(let y=y0;y<=y1;y++)if(s[y]!=null)v.push(s[y]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;}
+function riskKey(code){return code===MEDIAN?"LAT":code;}
+function riskSeries(code){
+  const r=DATA.risk[riskKey(code)]; if(!r) return null;
+  const pts=Object.keys(r.m).sort().map(m=>{const [y,mo]=m.split("-").map(Number);return {x:y+(mo-1)/12,y:r.m[m],lab:MES[mo-1]+" "+y,kind:"m"};});
+  if(r.last!=null){const d=new Date(DATA.riskDate+"T12:00:00");pts.push({x:d.getFullYear()+d.getMonth()/12+(d.getDate()-1)/365,y:r.last,lab:d.getDate()+" "+MES[d.getMonth()]+" "+d.getFullYear(),kind:"d"});}
+  return pts.length?pts:null;
+}
+function riskChange(code){
+  const r=DATA.risk[code]; if(!r||r.last==null) return null;
+  const d=new Date(DATA.riskDate+"T12:00:00"),p=new Date(d.getFullYear(),d.getMonth()-1,1);
+  const key=p.getFullYear()+"-"+String(p.getMonth()+1).padStart(2,"0");
+  return r.m[key]!=null?r.last-r.m[key]:null;
+}
+function name(code){return code===MEDIAN?"Latinoamérica (mediana)":ALL[code];}
+function riskName(code){return code===MEDIAN?"Latinoamérica (promedio J.P. Morgan)":ALL[code];}
+function color(code){return code===st.c?"var(--s1)":SLOTS[st.slot[code]||0];}
+function fmt(v,ind,withU){
+  if(v==null||isNaN(v)) return "s/d"; const I=IND[ind]||{d:0,u:""};
+  if(ind==="NGDPDPC") return "US$"+NF(0).format(v);
+  if(ind==="RISK") return NF(0).format(v)+(withU?" pb":"");
+  return NF(Math.abs(v)>=1000?0:I.d).format(v)+(withU?(I.u==="%"?"%":" "+I.u):"");
+}
+function fmtNum(v,ind){if(ind==="NGDPDPC")return "US$"+NF(0).format(v);if(ind==="RISK")return NF(0).format(v);const I=IND[ind];return NF(Math.abs(v)>=1000?0:I.d).format(v)+(I.u==="%"?"%":"");}
+function riskLevel(v){
+  if(v==null) return {c:"neutral",t:"Sin índice",l:0};
+  if(v<200) return {c:"good",t:"Riesgo bajo",l:1};
+  if(v<400) return {c:"warn",t:"Riesgo moderado",l:2};
+  if(v<1000) return {c:"serious",t:"Riesgo alto",l:3};
+  return {c:"bad",t:"Riesgo muy alto",l:4};
+}
+
+/* ---------- chart engine (SVG, one axis, crosshair tooltip) ---------- */
+const SVGNS="http://www.w3.org/2000/svg";
+function S(tag, a){ const e=document.createElementNS(SVGNS,tag); for(const k in a) e.setAttribute(k,a[k]); return e; }
+function niceTicks(min,max,n){
+  if(min===max){ min-=1; max+=1; }
+  const span=max-min, step0=span/Math.max(1,n), mag=Math.pow(10,Math.floor(Math.log10(step0)));
+  const err=step0/mag; const step=(err>=7.5?10:err>=3.5?5:err>=1.5?2:1)*mag;
+  const t=[]; const end=Math.ceil(max/step-1e-9)*step; for(let v=Math.floor(min/step+1e-9)*step; v<=end+step*1e-9; v+=step) t.push(+v.toFixed(10));
+  return {ticks:t, step};
+}
+function lineChart(host, o){
+  host.innerHTML="";
+  const W=Math.max(280, host.clientWidth), H=host.clientHeight||240;
+  const m={l:46,r:16,t:12,b:24};
+  const all=[]; o.series.forEach(s=>s.pts.forEach(p=>{ if(p.x>=o.x0&&p.x<=o.x1) all.push(p.y); }));
+  if(!all.length){ host.innerHTML='<div style="display:grid;place-items:center;height:100%;color:var(--text-3);font-size:13px">Sin datos para este período</div>'; return; }
+  let lo=Math.min(...all), hi=Math.max(...all);
+  const log = o.log==="auto" ? (hi>0 && lo>=0 && hi/Math.max(1,Math.abs(lo)+1)>40 && hi>150) : !!o.log;
+  const T = log? (v)=>Math.sign(v)*Math.log10(1+Math.abs(v)) : (v)=>v;
+  let tlo=T(lo), thi=T(hi);
+  if(o.zero && !log){ tlo=Math.min(tlo,0); thi=Math.max(thi,0); }
+  let ticks;
+  if(log){
+    ticks=[]; const cand=[-1000,-100,-10,0,10,100,1000,10000,100000,1000000];
+    cand.forEach(v=>{ if(T(v)>=tlo-0.3 && T(v)<=thi+0.3) ticks.push(v); });
+    if(ticks.length<2) ticks=[0,10,100];
+    tlo=Math.min(tlo,T(ticks[0])); thi=Math.max(thi,T(ticks[ticks.length-1]));
+  } else {
+    const pad=(thi-tlo)*0.08||1; const nt=niceTicks(tlo-(tlo===0?0:pad*0.5), thi+pad, H<230?4:5);
+    ticks=nt.ticks; tlo=Math.min(tlo,ticks[0]); thi=Math.max(thi,ticks[ticks.length-1]);
+  }
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const X=v=>m.l+(v-o.x0)/(o.x1-o.x0)*iw;
+  const Y=v=>m.t+ih-(T(v)-tlo)/(thi-tlo)*ih;
+  const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H,role:"img","aria-label":o.aria||""});
+  // projection shading
+  if(o.projFrom!=null && o.projFrom<o.x1){
+    const px=X(Math.max(o.x0,o.projFrom));
+    svg.appendChild(S("rect",{x:px,y:m.t,width:m.l+iw-px,height:ih,class:"projbg"}));
+    const tl=S("text",{x:m.l+iw-4,y:m.t+12,class:"projlab","text-anchor":"end"}); tl.textContent=o.projLabel||"Proyección"; svg.appendChild(tl);
+  }
+  // grid + y labels
+  ticks.forEach(v=>{
+    const y=Y(v); svg.appendChild(S("line",{x1:m.l,x2:m.l+iw,y1:y,y2:y,class:v===0?"zero":"gl"}));
+    const t=S("text",{x:m.l-8,y:y+4,"text-anchor":"end"}); t.textContent=o.yTick? o.yTick(v): NF(0).format(v); svg.appendChild(t);
+  });
+  if(log){ const t=S("text",{x:m.l+6,y:m.t+12,"font-size":"10.5"}); t.textContent="escala logarítmica"; svg.appendChild(t); }
+  // x ticks
+  const span=o.x1-o.x0; const xs=span>30?10:span>14?5:span>6?2:1;
+  for(let y=Math.ceil(o.x0/xs)*xs; y<=o.x1; y+=xs){
+    const t=S("text",{x:X(y),y:H-6,"text-anchor":"middle"}); t.textContent=String(Math.floor(y)); svg.appendChild(t);
+  }
+  // series
+  o.series.forEach(s=>{
+    const pts=s.pts.filter(p=>p.x>=o.x0-1e-9&&p.x<=o.x1+1e-9);
+    // split into segments: solid (real), dashed (proj), dotted (gap)
+    const segs=[];
+    for(let i=1;i<pts.length;i++){
+      const q=pts[i-1], p=pts[i];
+      const kind = (p.x-q.x)>(o.maxStep||1.01) ? "gap" : (p.proj ? "proj" : "solid");
+      const last=segs[segs.length-1];
+      if(last && last.kind===kind && last.pts[last.pts.length-1]===q) last.pts.push(p);
+      else segs.push({kind,pts:[q,p]});
+    }
+    if(pts.length===1) segs.push({kind:"solid",pts:[pts[0]]});
+    if(s.area){
+      segs.filter(g=>g.kind!=="gap").forEach(g=>{
+        if(g.pts.length<2) return;
+        const base=Y(log?0:Math.max(Math.min(0,thi),tlo));
+        const d="M"+g.pts.map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join("L")+`L${X(g.pts[g.pts.length-1].x).toFixed(1)},${base}L${X(g.pts[0].x).toFixed(1)},${base}Z`;
+        svg.appendChild(S("path",{d,fill:s.wash||"var(--s1-wash)"}));
+      });
+    }
+    segs.forEach(g=>{
+      if(g.pts.length<2) return;
+      const d="M"+g.pts.map(p=>X(p.x).toFixed(1)+","+Y(p.y).toFixed(1)).join("L");
+      const a={d,fill:"none",stroke:s.color,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"};
+      if(g.kind==="proj") a["stroke-dasharray"]="5 4";
+      if(g.kind==="gap"){ a["stroke-dasharray"]="1.5 4"; a["stroke-width"]=1.6; a.opacity=.8; }
+      svg.appendChild(S("path",a));
+    });
+    // end dot on last real point
+    const lr=[...pts].reverse().find(p=>!p.proj);
+    if(lr){ svg.appendChild(S("circle",{cx:X(lr.x),cy:Y(lr.y),r:4.5,fill:s.color,stroke:"var(--surface)","stroke-width":2})); }
+  });
+  // hover layer
+  const tip=el("div",{class:"tip"}); host.appendChild(tip);
+  const cross=S("line",{y1:m.t,y2:m.t+ih,stroke:"var(--text-3)","stroke-width":1,opacity:0}); svg.appendChild(cross);
+  const dots=o.series.map(s=>{ const c=S("circle",{r:4.5,fill:s.color,stroke:"var(--surface)","stroke-width":2,opacity:0}); svg.appendChild(c); return c; });
+  const hit=S("rect",{x:m.l,y:0,width:iw,height:H,fill:"transparent",style:"cursor:crosshair"}); svg.appendChild(hit);
+  const xsAll=[...new Set(o.series.flatMap(s=>s.pts.filter(p=>p.x>=o.x0&&p.x<=o.x1).map(p=>p.x)))].sort((a,b)=>a-b);
+  function move(ev){
+    const r=svg.getBoundingClientRect(); const cx=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+    const sx=cx*(W/r.width); const xv=o.x0+(sx-m.l)/iw*(o.x1-o.x0);
+    let best=xsAll[0], bd=Infinity; xsAll.forEach(x=>{ const d=Math.abs(x-xv); if(d<bd){bd=d;best=x;} });
+    const tol=(o.maxStep||1)*0.6;
+    let rows="", label="", note="";
+    o.series.forEach((s,i)=>{
+      let p=null, pd=Infinity; s.pts.forEach(q=>{ const d=Math.abs(q.x-best); if(d<pd){pd=d;p=q;} }); if(pd>=tol) p=null;
+      if(p){ dots[i].setAttribute("cx",X(p.x)); dots[i].setAttribute("cy",Y(p.y)); dots[i].setAttribute("opacity",1);
+        rows+=`<div class="r"><b style="background:${s.color}"></b><span>${esc(s.name)}</span><span>${esc(o.fmt(p.y))}</span></div>`;
+        if(!label) label=p.lab||String(Math.round(p.x)); if(p.proj) note= p.x<=LAST_REAL+1.01? "Estimación del FMI" : "Proyección del FMI";
+        if(p.kind==="d") note="Último dato diario";
+      } else dots[i].setAttribute("opacity",0);
+    });
+    if(!rows){ tip.style.opacity=0; cross.setAttribute("opacity",0); return; }
+    tip.innerHTML=`<div class="t">${esc(label)}</div>${rows}${note?`<div class="note">${note}</div>`:""}`;
+    const px=X(best)*(r.width/W); cross.setAttribute("x1",X(best)); cross.setAttribute("x2",X(best)); cross.setAttribute("opacity",.5);
+    tip.style.opacity=1;
+    const tw=tip.offsetWidth; let left=px+12; if(left+tw>r.width) left=px-tw-12; if(left<0) left=0;
+    tip.style.left=left+"px"; tip.style.top="8px";
+  }
+  function leave(){ tip.style.opacity=0; cross.setAttribute("opacity",0); dots.forEach(d=>d.setAttribute("opacity",0)); }
+  hit.addEventListener("mousemove",move); hit.addEventListener("mouseleave",leave);
+  hit.addEventListener("touchstart",move,{passive:true}); hit.addEventListener("touchmove",move,{passive:true}); hit.addEventListener("touchend",()=>setTimeout(leave,1800));
+  host.appendChild(svg);
+}
+
+
+
+function sparkline(host,pts,col){
+  host.innerHTML=""; if(!pts||pts.length<2) return;
+  const W=Math.max(120,host.clientWidth),H=host.clientHeight||34,p=4;
+  const xs=pts.map(q=>q.x),ys=pts.map(q=>q.y);const x0=Math.min(...xs),x1=Math.max(...xs);let y0=Math.min(...ys),y1=Math.max(...ys);if(y0===y1){y0-=1;y1+=1;}
+  const X=v=>p+(v-x0)/(x1-x0)*(W-2*p),Y=v=>p+(H-2*p)-(v-y0)/(y1-y0)*(H-2*p);
+  const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:"100%",height:H,"aria-hidden":"true"});
+  const d="M"+pts.map(q=>X(q.x).toFixed(1)+","+Y(q.y).toFixed(1)).join("L");
+  svg.appendChild(S("path",{d:d+`L${X(x1)},${H}L${X(x0)},${H}Z`,fill:"var(--s1-wash)"}));
+  svg.appendChild(S("path",{d,fill:"none",stroke:col,"stroke-width":2,"stroke-linejoin":"round","stroke-linecap":"round"}));
+  const l=pts[pts.length-1]; svg.appendChild(S("circle",{cx:X(l.x),cy:Y(l.y),r:4,fill:col,stroke:"var(--bg)","stroke-width":2}));
+  host.appendChild(svg);
+}
+
+/* ---------- layout ---------- */
+function shell(){
+  document.getElementById("app").innerHTML=`
+  <section class="hero" aria-label="Resumen">
+    <div>
+      <h1 id="title"></h1>
+      <div class="picker">
+        <label for="selC" class="sr" style="position:absolute;left:-9999px">País</label>
+        <select id="selC" class="big"></select>
+        <button class="btn" id="share" type="button">Copiar enlace</button>
+      </div>
+      <div class="brief" id="brief"></div>
+      <div class="stamp" id="stamp"></div>
+    </div>
+    <div class="mapbox">
+      <h3>Riesgo país hoy</h3>
+      <p class="what">Puntos básicos sobre los bonos de EE.UU. Toca un país.</p>
+      <div class="tmap" id="tmap"></div>
+      <div class="mleg"><span><i style="background:var(--r1)"></i>&lt;200</span><span><i style="background:var(--r2)"></i>200 a 400</span><span><i style="background:var(--r3)"></i>400 a 1,000</span><span><i style="background:var(--r4)"></i>&gt;1,000</span><span><i style="background:var(--rnone)"></i>Sin índice</span></div>
+    </div>
+  </section>
+  <div class="stats" id="stats"></div>
+  <div class="cmpbar" id="cmpbar" aria-label="Países en comparación"></div>
+
+  <section class="block" id="riesgo">
+    <div class="sechead"><div><h2>Riesgo país</h2><p class="h2sub">Lo que cobran de más los inversionistas por prestarle a cada país en vez de a Estados Unidos.</p></div>
+      <div class="opts"><span class="seg" data-rr role="group" aria-label="Período del riesgo país"><button data-v="1">1 año</button><button data-v="5">5 años</button><button data-v="all">Desde 2007</button></span></div>
+    </div>
+    <div class="grid"><div class="card wide" id="c-risk"></div></div>
+  </section>
+
+  <section class="block" id="actividad">
+    <div class="sechead"><div><h2>Crecimiento y precios</h2><p class="h2sub">Si la economía crece, cuánto suben los precios y cuánta gente busca trabajo sin encontrarlo.</p></div>
+      <div class="opts"><span class="seg" data-r role="group" aria-label="Período"><button data-v="10">10 años</button><button data-v="20">20 años</button><button data-v="all">Desde 1990</button></span>
+      <label class="toggle"><input type="checkbox" data-p checked> Proyecciones del FMI</label></div>
+    </div>
+    <div class="grid" id="g-act"></div>
+  </section>
+
+  <section class="block" id="finanzas">
+    <div class="sechead"><div><h2>Deuda y dólares</h2><p class="h2sub">Cuánto debe el gobierno, si gasta más de lo que recibe y cómo entran y salen los dólares.</p></div>
+      <div class="opts"><span class="seg" data-r role="group" aria-label="Período"><button data-v="10">10 años</button><button data-v="20">20 años</button><button data-v="all">Desde 1990</button></span>
+      <label class="toggle"><input type="checkbox" data-p checked> Proyecciones del FMI</label></div>
+    </div>
+    <div class="grid" id="g-fin"></div>
+  </section>
+
+  <section class="block" id="ranking">
+    <div class="sechead"><div><h2>Todos los países, uno al lado del otro</h2><p class="h2sub">Ordenados del mejor al peor. Estados Unidos aparece como referencia. Toca un país para abrirlo.</p></div>
+      <div class="opts"><select id="selRI" aria-label="Indicador"></select><select id="selRY" aria-label="Año"></select></div>
+    </div>
+    <div class="rank" id="rank"></div><div class="rankmed" id="rankmed"></div>
+  </section>
+
+  <section class="block" id="acerca">
+    <div class="sechead"><div><h2>Fuentes y acerca de Economiks</h2></div></div>
+    <div class="about" id="about"></div>
+  </section>
+  <footer id="foot"></footer>`;
+}
+
+/* ---------- ticker + map ---------- */
+function ticker(){
+  const host=document.getElementById("tk");
+  const list=CODES.filter(c=>DATA.risk[c]&&DATA.risk[c].last!=null).sort((a,b)=>DATA.risk[a].last-DATA.risk[b].last);
+  const item=(code,label,v,ch,btn)=>{
+    const cls=ch==null?"eq":ch>0.5?"up":ch<-0.5?"dn":"eq",ar=ch==null?"":ch>0.5?"▲":ch<-0.5?"▼":"=";
+    return `<button type="button" ${btn?`data-c="${code}" aria-pressed="${code===st.c}"`:"disabled"} title="${esc(ALL[code]||"Promedio de Latinoamérica")}: ${NF(0).format(v)} pb${ch!=null?`, ${ch>0?"+":""}${NF(0).format(ch)} frente al mes pasado`:""}"><span class="c">${esc(label)}</span><span class="v">${NF(0).format(v)}</span>${ch!=null?`<span class="d ${cls}">${ar}${NF(0).format(Math.abs(ch))}</span>`:""}</button>`;
+  };
+  const lat=DATA.risk.LAT;
+  host.innerHTML=(lat&&lat.last!=null?item("LAT","Latam",lat.last,riskChange("LAT"),false):"")+list.map(c=>item(c,ABBR[c],DATA.risk[c].last,riskChange(c),true)).join("");
+  host.querySelectorAll("button[data-c]").forEach(b=>b.addEventListener("click",()=>select(b.dataset.c)));
+  const d=new Date(DATA.riskDate+"T12:00:00");
+  document.getElementById("tklbl").textContent="Riesgo país, "+d.getDate()+" "+MES[d.getMonth()];
+}
+function tilemap(){
+  const host=document.getElementById("tmap"); host.innerHTML="";
+  Object.keys(TILE).forEach(c=>{
+    const [x,y]=TILE[c],r=DATA.risk[c],v=r&&r.last,L=riskLevel(v);
+    const b=el("button",{type:"button",class:`tile-c l${L.l}${c===st.c?" sel":""}`,style:`grid-column:${x+1};grid-row:${y+1}`,title:`${C[c]}: ${v!=null?NF(0).format(v)+" pb":"sin índice de riesgo país"}`,"aria-label":`${C[c]}, ${v!=null?NF(0).format(v)+" puntos básicos":"sin índice"}`},
+      `<span class="a">${ABBR[c]}</span><span class="n">${v!=null?NF(0).format(v):"–"}</span>`);
+    b.addEventListener("click",()=>select(c)); host.appendChild(b);
+  });
+}
+
+/* ---------- hero ---------- */
+function cmpFlag(ind,v,med){
+  if(v==null||med==null) return null;
+  if(ind==="PCPIPCH"){ if(v>=1&&v<=4) return {c:"good",t:"En rango sano"}; if(v<1) return {c:"warn",t:"Muy baja"}; if(v<=8) return {c:"warn",t:"Algo alta"}; if(v<=30) return {c:"serious",t:"Alta"}; return {c:"bad",t:"Muy alta"}; }
+  const I=IND[ind],better=I.better==="up"?v>med:v<med,close=Math.abs(v-med)<Math.max(0.3,Math.abs(med)*0.08);
+  if(close) return {c:"neutral",t:"Parecido a la región"};
+  return better?{c:"good",t:"Mejor que la región"}:{c:"serious",t:"Peor que la región"};
+}
+function hero(){
+  const c=st.c, isUS=c==="USA";
+  document.getElementById("title").textContent=(isUS?"Así va la economía de ":"Así va la economía de ")+ALL[c];
+  document.title="Economiks · "+ALL[c];
+  const a=riskSeries(c),last=a?a[a.length-1]:null;
+  const g=lastReal("NGDP_RPCH",c),i=lastReal("PCPIPCH",c),d=lastReal("GGXWDG_NGDP",c),bal=lastReal("GGXCNL_NGDP",c),nx=annual("NGDP_RPCH",c)[LAST_REAL+1];
+  const p=[];
+  if(g) p.push(`La economía ${g.v>=0?"creció":"se contrajo"} <strong>${fmt(Math.abs(g.v),"NGDP_RPCH",true)}</strong> en ${g.y}${nx!=null?`, y el FMI calcula ${nx>=0?"un":"una caída de"} ${fmt(Math.abs(nx),"NGDP_RPCH",true)} para ${LAST_REAL+1}`:""}.`);
+  if(i) p.push(`Los precios subieron <strong>${fmt(i.v,"PCPIPCH",true)}</strong> en ${i.y}${i.v>=1&&i.v<=4?", dentro de lo normal":i.v>8?", muy por encima de lo normal":i.v>4?", algo por encima de lo normal":""}.`);
+  if(isUS) p.push(`Estados Unidos es la vara con la que se mide a los demás: el riesgo país de cada nación es cuánto más interés paga que el gobierno estadounidense.`);
+  else if(last) p.push(`Prestarle a su gobierno en dólares rinde <strong>${NF(2).format(last.y/100)} puntos</strong> más al año que prestarle a Estados Unidos. Es un ${riskLevel(last.y).t.toLowerCase()}.`);
+  else p.push(`No tiene índice de riesgo país: casi no tiene bonos en dólares que se negocien en el mercado.`);
+  if(d) p.push(`El gobierno debe el equivalente al <strong>${fmt(d.v,"GGXWDG_NGDP",true)}</strong>${bal?` y en ${bal.y} ${bal.v<0?`gastó ${fmt(Math.abs(bal.v),"GGXCNL_NGDP",true)} más de lo que ingresó`:`ingresó ${fmt(bal.v,"GGXCNL_NGDP",true)} más de lo que gastó`}`:""}.`);
+  document.getElementById("brief").innerHTML=p.map(x=>`<p>${x}</p>`).join("");
+  document.getElementById("stamp").textContent=`Riesgo país al ${fmtDate(DATA.riskDate)}. Cifras anuales del FMI, edición de ${DATA.weo.toLowerCase()}.`;
+  const gm=lastReal("NGDP_RPCH",MEDIAN),im=lastReal("PCPIPCH",MEDIAN),dm=lastReal("GGXWDG_NGDP",MEDIAN);
+  const t=(href,lab,val,sub,flag,id)=>`<a class="stat" href="#${href}"><span class="lab">${lab}</span><span class="val">${val}</span><div class="spark" id="${id}"></div><span class="sub">${sub}</span>${flag?`<span class="flag ${flag.c}"><span class="dot"></span>${flag.t}</span>`:""}</a>`;
+  const rf=isUS?null:riskLevel(last&&last.y);
+  document.getElementById("stats").innerHTML=
+    t("riesgo","Riesgo país",isUS?"0<small>pb</small>":last?`${NF(0).format(last.y)}<small>pb</small>`:"–",isUS?"Es la referencia":last?`Último año · Latam ${NF(0).format(DATA.risk.LAT.last)} pb`:"Sin índice",rf,"sp1")+
+    t("actividad",`Crecimiento ${g?g.y:""}`,g?`${fmt(g.v,"NGDP_RPCH",false)}<small>%</small>`:"–",gm?`10 años · Región ${fmt(gm.v,"NGDP_RPCH",true)}`:"",isUS?null:cmpFlag("NGDP_RPCH",g&&g.v,gm&&gm.v),"sp2")+
+    t("actividad",`Inflación ${i?i.y:""}`,i?`${fmt(i.v,"PCPIPCH",false)}<small>%</small>`:"–",im?`10 años · Región ${fmt(im.v,"PCPIPCH",true)}`:"",cmpFlag("PCPIPCH",i&&i.v,im&&im.v),"sp3")+
+    t("finanzas",`Deuda pública ${d?d.y:""}`,d?`${fmt(d.v,"GGXWDG_NGDP",false)}<small>% del PIB</small>`:"–",dm?`10 años · Región ${fmt(dm.v,"GGXWDG_NGDP",true)}`:"",isUS?null:cmpFlag("GGXWDG_NGDP",d&&d.v,dm&&dm.v),"sp4");
+  const ann=(ind)=>{const s=annual(ind,c);return Object.keys(s).map(Number).filter(y=>y<=LAST_REAL&&y>LAST_REAL-10).sort((a,b)=>a-b).map(y=>({x:y,y:s[y]}));};
+  const sp=()=>{sparkline(document.getElementById("sp1"),a?a.filter(q=>q.x>=a[a.length-1].x-1.01):null,"var(--s1)");
+    sparkline(document.getElementById("sp2"),ann("NGDP_RPCH"),"var(--s1)");sparkline(document.getElementById("sp3"),ann("PCPIPCH"),"var(--s1)");sparkline(document.getElementById("sp4"),ann("GGXWDG_NGDP"),"var(--s1)");};
+  DRAWS.push(sp); sp();
+}
+
+/* ---------- comparison bar ---------- */
+function cmpbar(){
+  const host=document.getElementById("cmpbar");
+  const chips=st.ks.map(k=>`<span class="chip"><b style="background:${color(k)}"></b>${esc(name(k))}<button type="button" data-rm="${k}" aria-label="Quitar ${esc(name(k))}">×</button></span>`).join("");
+  const avail=[MEDIAN,...ALLC].filter(k=>k!==st.c&&!st.ks.includes(k));
+  const add=st.ks.length<MAXCMP?`<select id="addK" aria-label="Agregar un país a la comparación"><option value="">+ Agregar país</option>${avail.map(k=>`<option value="${k}">${esc(name(k))}</option>`).join("")}</select>`:`<span class="hint">Máximo ${MAXCMP} a la vez</span>`;
+  host.innerHTML=`<span class="lead">Comparando</span><span class="chip main"><b style="background:var(--s1)"></b>${esc(ALL[st.c])}</span><span class="lead">con</span>${chips}${add}`;
+  host.querySelectorAll("button[data-rm]").forEach(b=>b.addEventListener("click",()=>{const k=b.dataset.rm;st.ks=st.ks.filter(x=>x!==k);delete st.slot[k];render();}));
+  const s=document.getElementById("addK"); if(s) s.addEventListener("change",()=>{ if(s.value) addCmp(s.value); });
+}
+function addCmp(k){
+  if(st.ks.includes(k)||k===st.c||st.ks.length>=MAXCMP) return;
+  const used=new Set(st.ks.map(x=>st.slot[x])); let i=0; while(used.has(i)) i++;
+  st.slot[k]=i; st.ks.push(k); render();
+}
+
+/* ---------- cards ---------- */
+function xRange(){const x1=st.proj?2030:LAST_REAL+0.3;const x0=st.range==="all"?1990:(LAST_REAL-(+st.range)+1);return [x0,x1];}
+function seriesPts(ind,code){const s=annual(ind,code);return Object.keys(s).map(Number).sort((a,b)=>a-b).filter(y=>y<=2030&&(st.proj||y<=LAST_REAL)).map(y=>({x:y,y:s[y],proj:y>LAST_REAL,lab:String(y)}));}
+function legendHTML(items){return '<div class="legend">'+items.map(i=>`<span class="key"><b style="background:${i.color}"></b>${esc(i.name)}</span>`).join("")+'</div>';}
+function sentence(ind,code){
+  const I=IND[ind],lr=lastReal(ind,code); if(!lr) return `No hay datos de ${I.short} para ${esc(ALL[code])}.`;
+  const med=lastReal(ind,MEDIAN),s=annual(ind,code),a10=avg(s,lr.y-9,lr.y),us=code!=="USA"?lastReal(ind,"USA"):null;
+  let t=`En ${lr.y} fue <em>${fmt(lr.v,ind,true)}</em>`;
+  const parts=[];
+  if(med&&med.y===lr.y&&code!=="USA") parts.push(`la mediana de Latinoamérica fue ${fmt(med.v,ind,true)}`);
+  if(us&&us.y===lr.y&&ind!=="REM") parts.push(`la de Estados Unidos, ${fmt(us.v,ind,true)}`);
+  if(code==="USA"&&med&&med.y===lr.y) parts.push(`la mediana de Latinoamérica fue ${fmt(med.v,ind,true)}`);
+  if(parts.length) t+=`; ${parts.join(", y ")}`;
+  t+="."; if(a10!=null&&ind!=="NGDPDPC") t+=` Su promedio de los últimos diez años es ${fmt(a10,ind,true)}.`;
+  const nx=s[LAST_REAL+1]; if(nx!=null&&st.proj&&ind!=="REM") t+=` El FMI estima ${fmt(nx,ind,true)} para ${LAST_REAL+1}.`;
+  return t;
+}
+function cardFoot(srcTxt,how,tblId){
+  return `<div class="foot"><span>Fuente: ${srcTxt}</span><span class="acts"><details class="how"><summary>¿Cómo se lee?</summary></details><details class="data"><summary>Ver tabla</summary></details></span></div><p class="howtxt" hidden>${esc(how)}</p><div class="tbl" hidden id="${tblId}"></div>`;
+}
+function wireFoot(div){
+  const how=div.querySelector("details.how"),dat=div.querySelector("details.data"),ht=div.querySelector(".howtxt"),tb=div.querySelector(".tbl");
+  how.addEventListener("toggle",()=>{ht.hidden=!how.open;}); dat.addEventListener("toggle",()=>{tb.hidden=!dat.open;});
+}
+function card(host,ind){
+  const I=IND[ind],c=st.c,lr=lastReal(ind,c);
+  const ents=[c,...st.ks];
+  const div=el("div",{class:"card",id:"card-"+ind});
+  div.innerHTML=`<h3>${I.t}</h3>
+    <div class="bignum"><span class="n">${lr?fmt(lr.v,ind,false):"–"}<small>${lr&&ind!=="NGDPDPC"?esc(I.u):""}</small></span><span class="y">${lr?esc(ALL[c])+", "+lr.y:""}</span></div>
+    <p class="read">${sentence(ind,c)}</p>
+    ${legendHTML(ents.map(k=>({name:name(k),color:color(k)})))}
+    <div class="chart"></div>
+    ${cardFoot(I.src==="FMI"?`FMI, Perspectivas de la Economía Mundial (${esc(DATA.weo.toLowerCase())})`:"Banco Mundial",I.how,"t-"+ind)}`;
+  host.appendChild(div); wireFoot(div);
+  let [x0,x1]=xRange(); const noProj=ind==="REM"; if(noProj) x1=LAST_REAL+0.3;
+  const draw=()=>lineChart(div.querySelector(".chart"),{
+    series:ents.map(k=>({name:name(k),color:color(k),pts:seriesPts(ind,k)})),
+    x0,x1,zero:true,log:ind==="PCPIPCH"?"auto":false,projFrom:(st.proj&&!noProj)?LAST_REAL+0.5:null,projLabel:"Proyección del FMI",
+    fmt:v=>fmt(v,ind,true),yTick:v=>ind==="NGDPDPC"?(v>=1000?NF(0).format(v/1000)+"K":NF(0).format(v)):NF(Math.abs(v)<10&&v%1?1:0).format(v),
+    aria:`${I.t}: ${ents.map(name).join(", ")}`});
+  DRAWS.push(draw); draw();
+  const S_=ents.map(k=>annual(ind,k));
+  const ys=[...new Set(S_.flatMap(s=>Object.keys(s)).map(Number))].filter(y=>y>=x0&&y<=x1).sort((a,b)=>b-a);
+  div.querySelector(".tbl").innerHTML=`<table><thead><tr><th>Año</th>${ents.map(k=>`<th>${esc(name(k))}</th>`).join("")}</tr></thead><tbody>${ys.map(y=>`<tr><td>${y}${y>LAST_REAL?(y===LAST_REAL+1?" (est.)":" (proy.)"):""}</td>${S_.map(s=>`<td>${s[y]!=null?fmtNum(s[y],ind):"–"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+function riskCard(){
+  const host=document.getElementById("c-risk"),c=st.c,isUS=c==="USA";
+  const ents=[c,...st.ks].filter(k=>k!=="USA"&&DATA.risk[riskKey(k)]);
+  const a=riskSeries(c),last=a?a[a.length-1]:null,lvl=riskLevel(last&&last.y),lat=DATA.risk.LAT.last;
+  let yAgo=null; if(a){const t=last.x-1;let bd=0.09;a.forEach(p=>{const d=Math.abs(p.x-t);if(d<bd){bd=d;yAgo=p;}});}
+  let read;
+  if(isUS) read=`Estados Unidos no tiene riesgo país porque es la base de la medición: su riesgo es cero por definición. Aquí puedes ver a los países que estás comparando.`;
+  else if(!a) read=`J.P. Morgan no publica riesgo país para ${esc(C[c])}: casi no tiene bonos en dólares que se negocien.`;
+  else{ read=`Hoy los inversionistas le cobran a ${esc(C[c])} <em>${NF(2).format(last.y/100)} puntos porcentuales</em> más de interés al año que a Estados Unidos, ${last.y<lat?"menos":"más"} que el promedio de la región (${NF(0).format(lat)} pb).`;
+    if(yAgo){const d=last.y-yAgo.y;read+=` Hace un año estaba en ${NF(0).format(yAgo.y)} pb.`;} }
+  const gap=a&&a.some((p,i)=>i>0&&p.x-a[i-1].x>0.2);
+  const usNote=st.ks.includes("USA")&&!isUS?` Estados Unidos no sale en este gráfico porque es la referencia (0 pb).`:"";
+  host.innerHTML=`<h3>Riesgo país (EMBI)</h3>
+   <div class="bignum"><span class="n">${isUS?"0":last?NF(0).format(last.y):"–"}<small>pb</small></span><span class="y">${last?esc(C[c])+", "+last.lab:isUS?"Estados Unidos es la referencia":""}</span>${last?`<span class="flag ${lvl.c}"><span class="dot"></span>${lvl.t}</span>`:""}</div>
+   <p class="read">${read}</p>
+   <div class="guide"><span><i style="background:var(--good)"></i>Bajo: menos de 200</span><span><i style="background:var(--warn)"></i>Moderado: 200 a 400</span><span><i style="background:var(--serious)"></i>Alto: 400 a 1,000</span><span><i style="background:var(--bad)"></i>Muy alto: más de 1,000, zona de crisis o impago</span></div>
+   ${legendHTML(ents.map(k=>({name:riskName(k),color:color(k)})))}
+   <div class="chart"></div>
+   ${(gap||usNote)?`<p class="note2">${gap?"La línea punteada une meses sin datos públicos para este país (noviembre de 2024 a septiembre de 2026); desde octubre de 2026 guardamos el dato de cada día.":""}${usNote}</p>`:""}
+   ${cardFoot("J.P. Morgan (EMBI Global Diversified), publicado por el Banco Central de la República Dominicana y el Banco Central de Reserva del Perú","100 puntos básicos (pb) son 1 punto porcentual. Si un país tiene 300 pb y el bono de EE.UU. a 10 años paga 4%, ese país tiene que pagar cerca de 7% para conseguir prestado en dólares. Las categorías de bajo a muy alto son una guía para leer el número, no una calificación oficial.","t-risk")}`;
+  wireFoot(host);
+  const lx=last?last.x:(()=>{const d=new Date(DATA.riskDate+"T12:00:00");return d.getFullYear()+d.getMonth()/12;})();
+  const x0=st.rr==="all"?2007.8:lx-(+st.rr)-0.02,x1=lx+0.05;
+  const series=ents.map(k=>({name:riskName(k),color:color(k),pts:riskSeries(k)||[],area:k===c}));
+  const draw=()=>lineChart(host.querySelector(".chart"),{series,x0,x1,zero:true,log:"auto",maxStep:0.2,fmt:v=>NF(0).format(v)+" pb",yTick:v=>NF(0).format(v),aria:"Riesgo país"});
+  DRAWS.push(draw); draw();
+  const maps=ents.map(k=>new Map((riskSeries(k)||[]).map(p=>[p.lab,p.y])));
+  const labs=[]; const seen=new Set(); ents.forEach(k=>(riskSeries(k)||[]).forEach(p=>{if(!seen.has(p.lab)){seen.add(p.lab);labs.push(p);}}));
+  labs.sort((a,b)=>b.x-a.x);
+  host.querySelector(".tbl").innerHTML=`<table><thead><tr><th>Mes</th>${ents.map(k=>`<th>${esc(riskName(k))}</th>`).join("")}</tr></thead><tbody>${labs.map(p=>`<tr><td>${esc(p.lab)}</td>${maps.map(m=>`<td>${m.has(p.lab)?NF(0).format(m.get(p.lab)):"–"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+/* ---------- ranking ---------- */
+let RANKIND;
+function ranking(){
+  const ind=st.ri,host=document.getElementById("rank"),medh=document.getElementById("rankmed"),yr=+st.ry;
+  document.getElementById("selRY").disabled=ind==="RISK";
+  let rows=[];
+  if(ind==="RISK") CODES.forEach(c=>{const r=DATA.risk[c];if(r&&r.last!=null)rows.push({c,v:r.last});});
+  else ALLC.forEach(c=>{const v=(DATA.annual[ind][c]||{})[yr];if(v!=null)rows.push({c,v,ref:!C[c]});});
+  const I=RANKIND[ind],dir=I.better==="down"?1:-1;
+  rows.sort((a,b)=>ind==="PCPIPCH"?Math.abs(a.v-3)-Math.abs(b.v-3):dir*(a.v-b.v));
+  if(!rows.length){host.innerHTML='<p class="note2">Sin datos para este año.</p>';medh.textContent="";return;}
+  const vals=rows.map(r=>r.v).sort((a,b)=>a-b),q=p=>vals[Math.min(vals.length-1,Math.floor(p*(vals.length-1)))];
+  let hi=Math.max(0,...vals),lo=Math.min(0,...vals);
+  const cap=Math.max(q(0.85)*1.6,q(0.5)*3); if(hi>cap&&vals.length>4&&cap>0) hi=cap;
+  if(lo<0){const capL=Math.min(q(0.15)*1.6,q(0.5)*3);if(capL<0&&lo<capL)lo=capL;}
+  const span=hi-lo||1,z=(0-lo)/span*100; let n=0;
+  host.innerHTML=rows.map(r=>{const v=Math.max(lo,Math.min(hi,r.v)),cut=r.v>hi||r.v<lo,left=r.v>=0?z:(v-lo)/span*100,w=Math.abs(v)/span*100;
+    const cls=(r.c===st.c?" sel":"")+(st.ks.includes(r.c)?" cmp":"")+(r.ref?" ref":""),vt=ind==="RISK"?NF(0).format(r.v):fmtNum(r.v,ind);
+    const label=r.ref?`${esc(ALL[r.c])} (referencia)`:`${++n}. ${esc(C[r.c])}`;
+    const bg=(r.c===st.c||st.ks.includes(r.c))&&!r.ref?` style="background:${color(r.c)};left:${left}%;width:${Math.max(w,0.6)}%"`:` style="left:${left}%;width:${Math.max(w,0.6)}%"`;
+    return `<button type="button" class="row${cls}" data-c="${r.c}" aria-label="${esc(ALL[r.c])}: ${esc(vt)}"><span class="nm">${label}</span><span class="track">${lo<0?`<span class="axis0" style="left:${z}%"></span>`:""}<span class="bar ${r.v>=0?"pos":"neg"}${cut?" cut":""}"${bg}></span></span><span class="v">${esc(vt)}</span></button>`;}).join("");
+  host.querySelectorAll(".row").forEach(b=>b.addEventListener("click",()=>{select(b.dataset.c);window.scrollTo({top:0,behavior:"smooth"});}));
+  const m=ind==="RISK"?`Promedio de Latinoamérica (J.P. Morgan): ${NF(0).format(DATA.risk.LAT.last)} pb, al ${fmtDate(DATA.riskDate)}.`:(()=>{const v=medianSeries(ind)[yr];return v!=null?`Mediana de Latinoamérica en ${yr}: ${fmt(v,ind,true)}.${yr>LAST_REAL?" Estimación o proyección del FMI.":""}`:"";})();
+  medh.textContent=m+(ind==="PCPIPCH"?" Ordenado por cercanía a una inflación de 3%.":"")+(ind==="REM"?" De mayor a menor; más remesas no es mejor ni peor.":"")+" Una barra con un corte inclinado no cabe completa.";
+}
+
+/* ---------- about ---------- */
+function about(){
+  const gapC=CODES.filter(c=>{const r=DATA.risk[c];return r&&r.src&&r.src.length===1;}).map(c=>C[c]);
+  document.getElementById("about").innerHTML=`
+  <div>
+    <h4>Qué es esto</h4>
+    <p>Economiks junta en un solo lugar los números que más se citan cuando se habla de cómo va un país: riesgo país, crecimiento, inflación, desempleo, deuda y dólares. Están los ${CODES.length} países de Latinoamérica con datos y, como referencia, Estados Unidos.</p>
+    <p>Es un proyecto independiente hecho en Santo Domingo. No vende nada, no tiene anuncios y no pide datos personales. Ningún número está escrito a mano: todos salen de las fuentes oficiales de abajo y se actualizan solos. Puedes <a href="data.json">descargar todos los datos</a> y comprobarlos.</p>
+    <h4>Advertencias honestas</h4>
+    <ul>
+      <li>La comparación regional usa la <strong>mediana</strong> (el país del medio), no el promedio, para que la inflación de Venezuela o Argentina no distorsione todo.</li>
+      <li>El promedio de J.P. Morgan para Latinoamérica da saltos (a mediados de 2024 y en septiembre de 2026) cuando cambia el peso de cada país en el índice. Para comparar, es mejor ir país contra país.</li>
+      ${gapC.length?`<li>Para ${esc(gapC.join(", "))} no hay datos mensuales públicos del riesgo país entre noviembre de 2024 y septiembre de 2026.</li>`:""}
+      <li>Entre noviembre de 2024 y septiembre de 2026, el riesgo país de República Dominicana y el de la región se leyeron del gráfico que publica el Banco Central. Comparados con los años en que hay tabla, la diferencia media es de unos 5 pb.</li>
+      <li>Nicaragua y Haití no tienen riesgo país: casi no tienen bonos en dólares que se negocien.</li>
+    </ul>
+  </div>
+  <div>
+    <h4>De dónde salen los datos</h4>
+    <ul>
+      <li><strong>Riesgo país:</strong> índice EMBI Global Diversified de J.P. Morgan, en la serie diaria del <a href="https://cdn.bancentral.gov.do/documents/entorno-internacional/documents/EMBI.pdf" target="_blank" rel="noopener">Banco Central de la República Dominicana</a>, completada con la del <a href="https://estadisticas.bcrp.gob.pe/estadisticas/series/mensuales/indicadores-de-riesgo-para-paises-emergentes-embig" target="_blank" rel="noopener">Banco Central de Reserva del Perú</a>. Se actualiza cada día hábil.</li>
+      <li><strong>Crecimiento, inflación, desempleo, deuda, déficit, cuenta corriente y PIB por persona:</strong> <a href="https://www.imf.org/external/datamapper/" target="_blank" rel="noopener">Fondo Monetario Internacional</a>, Perspectivas de la Economía Mundial (${esc(DATA.weo.toLowerCase())}). Sale dos veces al año, en abril y octubre. Hasta ${LAST_REAL} son datos observados; ${LAST_REAL+1} es estimación y lo demás, proyección.</li>
+      <li><strong>Remesas:</strong> <a href="https://data.worldbank.org/indicator/BX.TRF.PWKR.DT.GD.ZS" target="_blank" rel="noopener">Banco Mundial</a>.</li>
+    </ul>
+    <h4>Esto no es asesoría</h4>
+    <p>Es información pública ordenada para entenderla mejor. No es una recomendación para invertir ni para tomar decisiones financieras.</p>
+  </div>`;
+  document.getElementById("foot").innerHTML=`Economiks · Santo Domingo · Datos al ${fmtDate(DATA.generated)} · <a href="data.json">Descargar datos</a>`;
+  const d=new Date(); document.getElementById("mdate").textContent=d.toLocaleDateString("es-DO",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+}
+
+/* ---------- controls ---------- */
+let DRAWS=[];
+function select(c){ if(!ALL[c]) return; st.c=c; if(st.ks.includes(c)){st.ks=st.ks.filter(x=>x!==c);delete st.slot[c];} sync(); render(); }
+function controls(){
+  const opt=CODES.map(c=>`<option value="${c}">${esc(C[c])}</option>`).join("");
+  document.getElementById("selC").innerHTML=`<optgroup label="Latinoamérica">${opt}</optgroup><optgroup label="Referencia"><option value="USA">Estados Unidos</option></optgroup>`;
+  document.getElementById("selC").addEventListener("change",e=>select(e.target.value));
+  RANKIND=Object.assign({RISK:{t:"Riesgo país (hoy)",better:"down"}},IND);
+  const ri=document.getElementById("selRI"); ri.innerHTML=Object.keys(RANKIND).map(k=>`<option value="${k}">${esc(RANKIND[k].t)}</option>`).join("");
+  const ry=document.getElementById("selRY"); const ys=[]; for(let y=2030;y>=1995;y--) ys.push(y);
+  ry.innerHTML=ys.map(y=>`<option value="${y}">${y}${y>LAST_REAL?(y===LAST_REAL+1?" (estimación)":" (proyección)"):""}</option>`).join("");
+  ri.addEventListener("change",()=>{st.ri=ri.value;ranking();}); ry.addEventListener("change",()=>{st.ry=ry.value;ranking();});
+  document.querySelectorAll(".seg[data-r] button").forEach(b=>b.addEventListener("click",()=>{st.range=b.dataset.v;sync();render();}));
+  document.querySelectorAll(".seg[data-rr] button").forEach(b=>b.addEventListener("click",()=>{st.rr=b.dataset.v;sync();riskCard();}));
+  document.querySelectorAll("input[data-p]").forEach(x=>x.addEventListener("change",()=>{st.proj=x.checked;sync();render();}));
+  document.getElementById("share").addEventListener("click",async()=>{
+    const url=location.href.split("#")[0]+"#"+st.c.toLowerCase();
+    try{await navigator.clipboard.writeText(url);toast("Enlace copiado");}catch(e){toast("No se pudo copiar; usa la dirección del navegador");}
+  });
+  window.addEventListener("hashchange",()=>{const h=(location.hash||"").replace("#","").toUpperCase();if(ALL[h]&&h!==st.c)select(h);});
+}
+function sync(){
+  document.getElementById("selC").value=st.c;
+  document.querySelectorAll(".seg[data-r] button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===st.range?"true":"false"));
+  document.querySelectorAll(".seg[data-rr] button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===st.rr?"true":"false"));
+  document.querySelectorAll("input[data-p]").forEach(x=>x.checked=st.proj);
+  document.getElementById("selRI").value=st.ri; document.getElementById("selRY").value=st.ry;
+  try{const h=location.hash.replace("#","").toUpperCase();if((h===""||ALL[h])&&h!==st.c)history.replaceState(null,"","#"+st.c.toLowerCase());}catch(e){}
+}
+function render(){
+  DRAWS=[]; ticker(); tilemap(); hero(); cmpbar(); riskCard();
+  const ga=document.getElementById("g-act"),gf=document.getElementById("g-fin"); ga.innerHTML=""; gf.innerHTML="";
+  ACT.forEach(i=>card(ga,i)); FIN.forEach(i=>card(gf,i)); ranking();
+}
+let rt; window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>DRAWS.forEach(f=>f()),120);});
+
+function start(d){
+  DATA=d; C=d.countries; ALL=Object.assign({},C,d.reference||{});
+  CODES=Object.keys(C).sort((a,b)=>C[a].localeCompare(C[b],"es")); ALLC=[...CODES,...Object.keys(d.reference||{})];
+  LAST_REAL=d.lastReal||2025; st.ry=String(LAST_REAL);
+  st.ks=st.ks.filter(k=>k===MEDIAN||ALL[k]); st.ks.forEach((k,i)=>st.slot[k]=i);
+  try{const h=(location.hash||"").replace("#","").toUpperCase();if(ALL[h]){st.c=h;if(st.ks.includes(h)){st.ks=st.ks.filter(x=>x!==h);}}}catch(e){}
+  shell(); controls(); sync(); about(); render();
+}
+fetch("data.json",{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(start).catch(e=>{
+  document.getElementById("app").innerHTML=`<div class="err"><strong>No se pudieron cargar los datos.</strong> Recarga la página en unos minutos. (${esc(e.message)})</div>`;
+});
+})();
+</script>
+</body>
+</html>
